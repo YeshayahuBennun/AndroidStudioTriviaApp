@@ -10,11 +10,13 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.ybennun.trivia.controller.AppController;
+import com.ybennun.trivia.data.AnswerListAsyncResponse;
 import com.ybennun.trivia.data.Repository;
 import com.ybennun.trivia.model.Question;
 
 import org.json.JSONArray;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -24,8 +26,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        List<Question> questions = new Repository().getQuestions();
+        List<Question> questions = new Repository().getQuestions(questionArrayList ->
+                Log.d("Main", "onCreate: " + questionArrayList));
 
-        Log.d("Main", "onCreate: " + questions);
+
     }
 }

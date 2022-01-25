@@ -4,20 +4,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
-import com.ybennun.trivia.controller.AppController;
-import com.ybennun.trivia.data.AnswerListAsyncResponse;
+import com.google.android.material.snackbar.Snackbar;
 import com.ybennun.trivia.data.Repository;
 import com.ybennun.trivia.databinding.ActivityMainBinding;
 import com.ybennun.trivia.model.Question;
-
-import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,8 +25,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
-        questionList = new Repository().getQuestions(questionArrayList ->
-                binding.questionTextView.setText(questionArrayList.get(currentQuestionIndex).getAnswer())
+        questionList = new Repository().getQuestions(questionArrayList -> {
+
+                    updateCounter(questionArrayList);
+                }
         );
 
         binding.buttonNext.setOnClickListener(view -> {
@@ -44,19 +37,36 @@ public class MainActivity extends AppCompatActivity {
         });
 
         binding.buttonTrue.setOnClickListener(view -> {
+            checkAnswer(true);
 
         });
 
         binding.buttonFalse.setOnClickListener(view -> {
-
+            checkAnswer(false);
         });
+    }
 
+    private void checkAnswer(boolean userChoseCorrect) {
+        boolean answer = questionList.get(currentQuestionIndex).isAnswerTrue();
+        int snackMessageId = 0;
+        if (userChoseCorrect == answer) {
+            snackMessageId = R.string.correct_answer;
+        } else {
+            snackMessageId = R.string.incorrect_answer;
+        }
 
+        Snackbar.make(binding.cardView, snackMessageId, Snackbar.LENGTH_SHORT).show();
+
+    }
+
+    private void updateCounter(ArrayList<Question> questionArrayList) {
+        binding.questionTextView.setText(questionArrayList.get(currentQuestionIndex).getAnswer());
+        binding.textViewOutOf.setText(String.format(getString(R.string.text_formatted), currentQuestionIndex, questionArrayList.size()));
     }
 
     private void updateQuestion() {
         String question = questionList.get(currentQuestionIndex).getAnswer();
         binding.questionTextView.setText(question);
+        updateCounter((ArrayList<Question>) questionList);
     }
-
 }

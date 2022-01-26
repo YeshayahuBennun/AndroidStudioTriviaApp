@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
 import android.os.Bundle;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.ybennun.trivia.data.Repository;
@@ -25,10 +27,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
-        questionList = new Repository().getQuestions(questionArrayList -> {
-
-                    updateCounter(questionArrayList);
-                }
+        questionList = new Repository().getQuestions(this::updateCounter
         );
 
         binding.buttonNext.setOnClickListener(view -> {
@@ -38,11 +37,13 @@ public class MainActivity extends AppCompatActivity {
 
         binding.buttonTrue.setOnClickListener(view -> {
             checkAnswer(true);
+            updateQuestion();
 
         });
 
         binding.buttonFalse.setOnClickListener(view -> {
             checkAnswer(false);
+            updateQuestion();
         });
     }
 
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
             snackMessageId = R.string.correct_answer;
         } else {
             snackMessageId = R.string.incorrect_answer;
+            shakeAnimation();
         }
 
         Snackbar.make(binding.cardView, snackMessageId, Snackbar.LENGTH_SHORT).show();
@@ -68,5 +70,11 @@ public class MainActivity extends AppCompatActivity {
         String question = questionList.get(currentQuestionIndex).getAnswer();
         binding.questionTextView.setText(question);
         updateCounter((ArrayList<Question>) questionList);
+    }
+
+    private void shakeAnimation() {
+        Animation shake = AnimationUtils.loadAnimation(MainActivity.this, R.anim.shake_animation);
+
+        binding.cardView.setAnimation(shake);
     }
 }

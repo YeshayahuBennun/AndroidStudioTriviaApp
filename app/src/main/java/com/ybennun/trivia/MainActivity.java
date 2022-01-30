@@ -5,6 +5,7 @@ import androidx.databinding.DataBindingUtil;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -13,6 +14,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.ybennun.trivia.data.Repository;
 import com.ybennun.trivia.databinding.ActivityMainBinding;
 import com.ybennun.trivia.model.Question;
+import com.ybennun.trivia.model.Score;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,12 +24,15 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private int currentQuestionIndex = 0;
     List<Question> questionList;
+    private int scoreCounter = 0;
+    private Score score;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        score = new Score();
 
         questionList = new Repository().getQuestions(this::updateCounter
         );
@@ -55,9 +60,11 @@ public class MainActivity extends AppCompatActivity {
         if (userChoseCorrect == answer) {
             snackMessageId = R.string.correct_answer;
             fadeAnimation();
+            addPoints();
         } else {
             snackMessageId = R.string.incorrect_answer;
             shakeAnimation();
+            deductPoints();
         }
 
         Snackbar.make(binding.cardView, snackMessageId, Snackbar.LENGTH_SHORT).show();
@@ -69,8 +76,8 @@ public class MainActivity extends AppCompatActivity {
         binding.textViewOutOf.setText(String.format(getString(R.string.text_formatted), currentQuestionIndex, questionArrayList.size()));
     }
 
-    private void fadeAnimation(){
-        AlphaAnimation alphaAnimation = new AlphaAnimation(1.0f,1.0f);
+    private void fadeAnimation() {
+        AlphaAnimation alphaAnimation = new AlphaAnimation(1.0f, 1.0f);
         alphaAnimation.setDuration(300);
         alphaAnimation.setRepeatCount(1);
         alphaAnimation.setRepeatMode(Animation.REVERSE);
@@ -122,5 +129,25 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void deductPoints() {
+
+        if (scoreCounter > 0) {
+            scoreCounter -= 100;
+            score.setScore(scoreCounter);
+            binding.scoreText.setText(String.valueOf(score.getScore()));
+
+        } else {
+            scoreCounter = 0;
+            score.setScore(scoreCounter);
+
+        }
+    }
+
+    private void addPoints() {
+        scoreCounter += 100;
+        score.setScore(scoreCounter);
+        binding.scoreText.setText(String.valueOf(score.getScore()));
     }
 }

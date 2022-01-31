@@ -16,6 +16,7 @@ import com.ybennun.trivia.databinding.ActivityMainBinding;
 import com.ybennun.trivia.model.Question;
 import com.ybennun.trivia.model.Score;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         score = new Score();
+        binding.scoreText.setText(MessageFormat.format("Current Score: {0}", String.valueOf(score.getScore())));
 
         questionList = new Repository().getQuestions(this::updateCounter
         );
@@ -136,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
         if (scoreCounter > 0) {
             scoreCounter -= 100;
             score.setScore(scoreCounter);
-            binding.scoreText.setText(String.valueOf(score.getScore()));
+            binding.scoreText.setText(MessageFormat.format("Current Score: {0}", String.valueOf(score.getScore())));
 
         } else {
             scoreCounter = 0;
@@ -148,6 +150,6 @@ public class MainActivity extends AppCompatActivity {
     private void addPoints() {
         scoreCounter += 100;
         score.setScore(scoreCounter);
-        binding.scoreText.setText(String.valueOf(score.getScore()));
+        binding.scoreText.setText(MessageFormat.format("Current Score: {0}", String.valueOf(score.getScore())));
     }
 }

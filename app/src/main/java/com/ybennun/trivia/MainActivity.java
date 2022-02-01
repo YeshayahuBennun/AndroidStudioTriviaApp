@@ -15,6 +15,7 @@ import com.ybennun.trivia.data.Repository;
 import com.ybennun.trivia.databinding.ActivityMainBinding;
 import com.ybennun.trivia.model.Question;
 import com.ybennun.trivia.model.Score;
+import com.ybennun.trivia.util.Prefs;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -27,14 +28,20 @@ public class MainActivity extends AppCompatActivity {
     List<Question> questionList;
     private int scoreCounter = 0;
     private Score score;
+    private Prefs prefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         score = new Score();
+        prefs = new Prefs(MainActivity.this);
+        Log.d("Main", "onCreate: "+prefs.getHighestScore());
+
         binding.scoreText.setText(MessageFormat.format("Current Score: {0}", String.valueOf(score.getScore())));
+        binding.highestScoreText.setText(MessageFormat.format("Highest: {0}", String.valueOf(prefs.getHighestScore())));
 
         questionList = new Repository().getQuestions(this::updateCounter
         );
@@ -42,6 +49,9 @@ public class MainActivity extends AppCompatActivity {
         binding.buttonNext.setOnClickListener(view -> {
             currentQuestionIndex = (currentQuestionIndex + 1) % questionList.size();
             updateQuestion();
+            prefs.saveHighestScore(scoreCounter);
+            Log.d("Main", "onCreate: "+prefs.getHighestScore());
+
         });
 
         binding.buttonTrue.setOnClickListener(view -> {

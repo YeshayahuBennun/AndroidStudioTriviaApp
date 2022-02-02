@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         score = new Score();
         prefs = new Prefs(MainActivity.this);
-        Log.d("Main", "onCreate: "+prefs.getHighestScore());
+
 
         binding.scoreText.setText(MessageFormat.format("Current Score: {0}", String.valueOf(score.getScore())));
         binding.highestScoreText.setText(MessageFormat.format("Highest: {0}", String.valueOf(prefs.getHighestScore())));
@@ -49,8 +49,7 @@ public class MainActivity extends AppCompatActivity {
         binding.buttonNext.setOnClickListener(view -> {
             currentQuestionIndex = (currentQuestionIndex + 1) % questionList.size();
             updateQuestion();
-            prefs.saveHighestScore(scoreCounter);
-            Log.d("Main", "onCreate: "+prefs.getHighestScore());
+
 
         });
 
@@ -161,5 +160,12 @@ public class MainActivity extends AppCompatActivity {
         scoreCounter += 100;
         score.setScore(scoreCounter);
         binding.scoreText.setText(MessageFormat.format("Current Score: {0}", String.valueOf(score.getScore())));
+    }
+
+    @Override
+    protected void onPause() {
+        prefs.saveHighestScore(score.getScore());
+        Log.d("Pause", "onPaused: saving score " + prefs.getHighestScore());
+        super.onPause();
     }
 }

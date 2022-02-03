@@ -47,10 +47,7 @@ public class MainActivity extends AppCompatActivity {
         );
 
         binding.buttonNext.setOnClickListener(view -> {
-            currentQuestionIndex = (currentQuestionIndex + 1) % questionList.size();
-            updateQuestion();
-
-
+            getNextQuestion();
         });
 
         binding.buttonTrue.setOnClickListener(view -> {
@@ -63,6 +60,11 @@ public class MainActivity extends AppCompatActivity {
             checkAnswer(false);
             updateQuestion();
         });
+    }
+
+    private void getNextQuestion() {
+        currentQuestionIndex = (currentQuestionIndex + 1) % questionList.size();
+        updateQuestion();
     }
 
     private void checkAnswer(boolean userChoseCorrect) {
@@ -104,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onAnimationEnd(Animation animation) {
                 binding.questionTextView.setTextColor(Color.WHITE);
+                getNextQuestion();
             }
 
             @Override
@@ -133,6 +136,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onAnimationEnd(Animation animation) {
                 binding.questionTextView.setTextColor(Color.WHITE);
+                getNextQuestion();
             }
 
             @Override

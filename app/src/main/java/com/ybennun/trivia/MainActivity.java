@@ -35,10 +35,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         score = new Score();
         prefs = new Prefs(MainActivity.this);
 
+        // Retrieve the last state
+        currentQuestionIndex = prefs.getState();
 
         binding.scoreText.setText(MessageFormat.format("Current Score: {0}", String.valueOf(score.getScore())));
         binding.highestScoreText.setText(MessageFormat.format("Highest: {0}", String.valueOf(prefs.getHighestScore())));
@@ -169,6 +172,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         prefs.saveHighestScore(score.getScore());
+        prefs.setState(currentQuestionIndex);
+        Log.d("State", "onPause: saving state " + prefs.getState());
         Log.d("Pause", "onPaused: saving score " + prefs.getHighestScore());
         super.onPause();
     }
